@@ -29,24 +29,30 @@ jobs:
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:-:arch:'
     
+    - name: Copy Flutter app to build directory
+      run: |
+        cp -r download/snapbeam/flutter-app/* snap-beam/
+        cd snap-beam
+        # Fix any intl version conflicts
+        sed -i 's/intl: .*$/intl: ^0.19.0/' pubspec.yaml 2>/dev/null || true
+    
     - name: Get Flutter dependencies
       run: |
         cd snap-beam
         flutter pub get
-        flutter pub upgrade
     
     - name: Build APK (Release)
       run: |
         cd snap-beam
         flutter build apk --release
-        echo "APK built successfully"
-        ls -lah build/app/outputs/flutter-apk/
+        echo "✅ APK built successfully"
+        ls -lah build/app/outputs/flutter-apk/ || ls -lah build/app/outputs/apk/release/
     
     - name: Build AAB (Release)
       run: |
         cd snap-beam
         flutter build appbundle --release
-        echo "AAB built successfully"
+        echo "✅ AAB built successfully"
         ls -lah build/app/outputs/bundle/release/
     
     - name: Upload APK Artifact
@@ -68,6 +74,9 @@ jobs:
     - name: Build Status Summary
       if: success()
       run: |
-        echo "✅ Android build completed successfully!"
+        echo "======================================"
+        echo "✅ Android Build Completed Successfully!"
+        echo "======================================"
         echo "APK: snap-beam/build/app/outputs/flutter-apk/app-release.apk"
         echo "AAB: snap-beam/build/app/outputs/bundle/release/app-release.aab"
+        echo "Both artifacts are ready for distribution"
