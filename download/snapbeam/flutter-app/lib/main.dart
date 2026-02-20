@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'l10n/app_localizations.dart';
 import 'providers/connection_provider.dart';
 import 'providers/theme_provider.dart';
+import 'screens/splash_screen.dart';
+import 'screens/widget_setup_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/camera_screen.dart';
 import 'screens/settings_screen.dart';
-import 'services/widget_service.dart';
+import 'screens/premium_screen.dart';
 import 'utils/app_theme.dart';
 
 void main() async {
@@ -22,19 +24,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   
-  // Initialize home widget callback
-  HomeWidget.registerInteractivityCallback(interactiveCallback);
-  
   runApp(const SnapBeamApp());
-}
-
-@pragma('vm:entry-point')
-void interactiveCallback(Uri? uri) {
-  // Handle widget tap
-  if (uri != null) {
-    // Navigate to specific screen based on uri
-    print('Widget tapped with URI: $uri');
-  }
 }
 
 class SnapBeamApp extends StatelessWidget {
@@ -71,16 +61,80 @@ class SnapBeamApp extends StatelessWidget {
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
             
+            // Start with splash screen
+            home: const SplashScreen(),
+            
             // Routes
-            home: const WelcomeScreen(),
             routes: {
+              '/splash': (context) => const SplashScreen(),
+              '/widget-setup': (context) => WidgetSetupScreen(
+                onComplete: () {
+                  Navigator.pushReplacementNamed(context, '/welcome');
+                },
+              ),
               '/welcome': (context) => const WelcomeScreen(),
               '/camera': (context) => const CameraScreen(),
               '/settings': (context) => const SettingsScreen(),
+              '/premium': (context) => const PremiumScreen(),
             },
           );
         },
       ),
     );
+  }
+}
+
+/// Main app screen that handles navigation between splash, widget setup, and main app
+class MainAppScreen extends StatefulWidget {
+  const MainAppScreen({super.key});
+
+  @override
+  State<MainAppScreen> createState() => _MainAppScreenState();
+}
+
+class _MainAppScreenState extends State<MainAppScreen> {
+  bool _isLoading = true;
+  bool _showWidgetSetup = false;
+  bool _widgetSetupComplete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingStatus();
+  }
+
+  Future<void> _checkOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenWidgetSetup = prefs.getBool('widget_setup_seen') ?? false;
+    
+    setState(() {
+      _showWidgetSetup = !hasSeenWidgetSetup;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _completeWidgetSetup() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('widget_setup_seen', true);
+    
+    setState(() {
+      _widgetSetupComplete = true;
+      _showWidgetSetup = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const SplashScreen();
+    }
+
+    if (_showWidgetSetup && !_widgetSetupComplete) {
+      return WidgetSetupScreen(
+        onComplete: _completeWidgetSetup,
+      );
+    }
+
+    return const WelcomeScreen();
   }
 }

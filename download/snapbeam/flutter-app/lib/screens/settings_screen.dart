@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/connection_provider.dart';
 import '../providers/theme_provider.dart';
+import 'widget_setup_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -21,6 +22,11 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          // Widget Setup Section - Prominent at top
+          _buildWidgetSetupCard(context),
+
+          const Divider(height: 32),
+
           // Connection Section
           _buildSectionHeader(context, 'Connection'),
           
@@ -39,7 +45,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
               title: Text('Code: ${connectionProvider.connectionId}'),
-              subtitle: Text('Active connection'),
+              subtitle: const Text('Active connection'),
               trailing: IconButton(
                 icon: const Icon(Icons.share_rounded),
                 onPressed: () {
@@ -62,7 +68,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             title: Text(l10n.regenerateCode),
-            subtitle: Text('Create a new connection code'),
+            subtitle: const Text('Create a new connection code'),
             onTap: () => _showRegenerateDialog(context),
           ),
           
@@ -80,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             title: Text(l10n.disconnect),
-            subtitle: Text('End current connection'),
+            subtitle: const Text('End current connection'),
             onTap: () => _showDisconnectDialog(context),
           ),
 
@@ -148,53 +154,6 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(height: 32),
 
-          // Widget Section
-          _buildSectionHeader(context, l10n.widgetSetup),
-          
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.widgets_rounded,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Add Widget',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.widgetInstructions,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Android: Long press home screen → Widgets → SnapBeam',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'iOS: Long press home screen → + → SnapBeam',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const Divider(height: 32),
-
           // About Section
           _buildSectionHeader(context, l10n.aboutSnapbeam),
           
@@ -215,8 +174,121 @@ class SettingsScreen extends StatelessWidget {
             subtitle: const Text('1.0.0'),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 100),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWidgetSetupCard(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF6366F1), Color(0xFFEC4899)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6366F1).withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showWidgetSetup(context),
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.widgets_rounded,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Widget Setup',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Add the SnapBeam widget to your home screen',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Colors.white.withOpacity(0.9),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        color: Colors.white.withOpacity(0.9),
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Tap to see step-by-step instructions',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -230,6 +302,25 @@ class SettingsScreen extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
               letterSpacing: 1.2,
             ),
+      ),
+    );
+  }
+
+  void _showWidgetSetup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WidgetSetupScreen(
+          onComplete: () {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Widget setup complete!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

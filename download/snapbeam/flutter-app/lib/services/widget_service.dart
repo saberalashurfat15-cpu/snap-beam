@@ -2,24 +2,26 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Widget service for managing home screen widgets
-/// Supports both Android and iOS widgets
+/// 
+/// Uses SharedPreferences to store data that both the Flutter app
+/// and the native Android widget can access.
+/// 
+/// Android widget reads from SharedPreferences with the key format:
+/// "flutter.<key>" (added automatically by SharedPreferences package)
 class WidgetService {
-  static const String _androidProviderName = 'SnapBeamWidgetProvider';
-  static const String _widgetIdKey = 'connection_id';
-  static const String _photoKey = 'last_photo';
-  static const String _captionKey = 'last_caption';
-  static const String _updatedAtKey = 'updated_at';
+  // These keys are stored as "flutter.last_photo" etc in SharedPreferences
+  // The Android widget reads with the "flutter." prefix
+  static const String _keyPhoto = 'last_photo';
+  static const String _keyCaption = 'last_caption';
+  static const String _keyUpdatedAt = 'last_updated_at';
+  static const String _keyConnectionId = 'connection_id';
 
   /// Initialize widget service
   static Future<void> initialize() async {
-    // Check if widget is launched
-    final widgetInfo = await HomeWidget.getWidgetData(_widgetIdKey);
-    if (widgetInfo != null) {
-      debugPrint('Widget launched with connection: $widgetInfo');
-    }
+    debugPrint('WidgetService initialized');
   }
 
   /// Update widget with new photo
@@ -31,92 +33,67 @@ class WidgetService {
     DateTime? updatedAt,
   }) async {
     try {
-      // Save connection ID for widget
-      await HomeWidget.saveWidgetData(
-        _widgetIdKey,
-        connectionId,
-      );
-
-      // Save photo (prefer base64 for offline support)
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Save all data
       if (photoBase64 != null) {
-        await HomeWidget.saveWidgetData(_photoKey, photoBase64);
+        await prefs.setString(_keyPhoto, photoBase64);
       }
-
-      // Save caption
+      
       if (caption != null) {
-        await HomeWidget.saveWidgetData(_captionKey, caption);
+        await prefs.setString(_keyCaption, caption);
       }
-
-      // Save update time
+      
       if (updatedAt != null) {
-        await HomeWidget.saveWidgetData(
-          _updatedAtKey,
-          updatedAt.toIso8601String(),
-        );
+        await prefs.setString(_keyUpdatedAt, updatedAt.toIso8601String());
       }
+      
+      await prefs.setString(_keyConnectionId, connectionId);
 
-      // Update Android widget
-      await HomeWidget.updateWidget(
-        name: _androidProviderName,
-        iOSName: 'SnapBeamWidget',
-        androidName: _androidProviderName,
-      );
-
-      debugPrint('Widget updated successfully');
+      debugPrint('Widget data saved: photo=${photoBase64 != null}, caption=$caption');
     } catch (e) {
-      debugPrint('Error updating widget: $e');
+      debugPrint('Error saving widget data: $e');
     }
   }
 
   /// Clear widget data
   static Future<void> clearWidget() async {
     try {
-      await HomeWidget.saveWidgetData(_widgetIdKey, null);
-      await HomeWidget.saveWidgetData(_photoKey, null);
-      await HomeWidget.saveWidgetData(_captionKey, null);
-      await HomeWidget.saveWidgetData(_updatedAtKey, null);
-
-      await HomeWidget.updateWidget(
-        name: _androidProviderName,
-        iOSName: 'SnapBeamWidget',
-        androidName: _androidProviderName,
-      );
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_keyPhoto);
+      await prefs.remove(_keyCaption);
+      await prefs.remove(_keyUpdatedAt);
+      await prefs.remove(_keyConnectionId);
+      
+      debugPrint('Widget data cleared');
     } catch (e) {
-      debugPrint('Error clearing widget: $e');
+      debugPrint('Error clearing widget data: $e');
     }
   }
 
   /// Get current widget data
   static Future<WidgetData?> getWidgetData() async {
     try {
-      final connectionId = await HomeWidget.getWidgetData(_widgetIdKey);
-      final photoBase64 = await HomeWidget.getWidgetData(_photoKey);
-      final caption = await HomeWidget.getWidgetData(_captionKey);
-      final updatedAtStr = await HomeWidget.getWidgetData(_updatedAtKey);
+      final prefs = await SharedPreferences.getInstance();
+      final connectionId = prefs.getString(_keyConnectionId);
+      final photoBase64 = prefs.getString(_keyPhoto);
+      final caption = prefs.getString(_keyCaption);
+      final updatedAtStr = prefs.getString(_keyUpdatedAt);
 
       if (connectionId == null) return null;
 
       return WidgetData(
-        connectionId: connectionId.toString(),
-        photoBase64: photoBase64?.toString(),
-        caption: caption?.toString(),
+        connectionId: connectionId,
+        photoBase64: photoBase64,
+        caption: caption,
         updatedAt: updatedAtStr != null
-            ? DateTime.parse(updatedAtStr.toString())
+            ? DateTime.parse(updatedAtStr)
             : null,
       );
     } catch (e) {
       debugPrint('Error getting widget data: $e');
       return null;
     }
-  }
-
-  /// Register callback for widget interactions
-  static Future<void> registerCallback(
-    void Function(Uri?) callback,
-  ) async {
-    await HomeWidget.registerInteractivityCallback(
-      (uri) => callback(uri),
-    );
   }
 }
 

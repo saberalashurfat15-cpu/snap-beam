@@ -5,129 +5,39 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
-  <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare">
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
+  <img src="https://img.shields.io/badge/Platform-iOS%20%7C%20Android-green?style=for-the-badge" alt="Platform">
+  <img src="https://img.shields.io/badge/Flutter-3.2+-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
+  <img src="https://img.shields.io/badge/Package%20ID-app.snapbeam.photo-blue?style=for-the-badge" alt="Package ID">
 </p>
 
 ---
 
-## 📱 Overview
+## 📱 App Store Ready
 
-SnapBeam is a revolutionary photo-sharing app that lets you send photos instantly to your loved ones' home screen widgets. No accounts, no login friction—just simple private connection codes.
+SnapBeam is fully configured for deployment to both:
+- **Google Play Store** (Android)
+- **Apple App Store** (iOS)
 
-### Key Features
+### Unique Package ID
+- **Android**: `app.snapbeam.photo`
+- **iOS**: `app.snapbeam.photo`
 
-- **Instant Photo Sharing**: Capture and send photos in seconds
-- **Home Screen Widgets**: Photos appear directly on home screen widgets
-- **No Accounts Required**: Just share a connection code
-- **Multi-Language Support**: English, Arabic, Spanish
-- **Cross-Platform**: Works on both iOS and Android
-- **Free Backend**: Powered by Cloudflare Workers
-
----
-
-## 🏗 Architecture
-
-```
-┌─────────────────┐     ┌─────────────────┐
-│   Flutter App   │     │   Flutter App   │
-│   (Sender)      │     │   (Receiver)    │
-└────────┬────────┘     └────────┬────────┘
-         │                       │
-         └───────────┬───────────┘
-                     │
-         ┌───────────▼───────────┐
-         │   Cloudflare Workers  │
-         │   (REST API)          │
-         └───────────┬───────────┘
-                     │
-         ┌───────────▼───────────┐
-         │   Cloudflare KV + R2  │
-         │   (Storage)           │
-         └───────────────────────┘
-```
-
----
-
-## 📁 Project Structure
-
-```
-snapbeam/
-├── flutter-app/                 # Flutter mobile application
-│   ├── lib/
-│   │   ├── main.dart           # App entry point
-│   │   ├── screens/            # UI screens
-│   │   │   ├── welcome_screen.dart
-│   │   │   ├── camera_screen.dart
-│   │   │   └── settings_screen.dart
-│   │   ├── widgets/            # Reusable widgets
-│   │   │   ├── connection_code_display.dart
-│   │   │   └── join_connection_dialog.dart
-│   │   ├── services/           # Backend & storage
-│   │   │   ├── backend_service.dart
-│   │   │   └── widget_service.dart
-│   │   ├── providers/          # State management
-│   │   │   ├── connection_provider.dart
-│   │   │   └── theme_provider.dart
-│   │   ├── l10n/               # Localization
-│   │   │   ├── app_en.arb
-│   │   │   ├── app_ar.arb
-│   │   │   └── app_es.arb
-│   │   └── utils/              # Utilities
-│   │       ├── app_theme.dart
-│   │       └── image_compress.dart
-│   └── pubspec.yaml
-│
-├── cloudflare-workers/          # Backend API
-│   ├── worker.js               # Main worker code
-│   ├── wrangler.toml           # Cloudflare config
-│   └── package.json
-│
-├── docs/                        # Documentation
-│   └── DEPLOYMENT.md
-│
-└── README.md
-```
+This package ID is unique and ready for store submission.
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Flutter SDK 3.2+
-- Node.js 18+
-- Cloudflare account (free tier works)
+- Android Studio (for Android)
+- Xcode 15+ (for iOS, macOS only)
+- CocoaPods (for iOS)
 
-### 1. Deploy the Backend
-
-```bash
-# Navigate to cloudflare workers
-cd cloudflare-workers
-
-# Install dependencies
-npm install
-
-# Login to Cloudflare
-npx wrangler login
-
-# Create KV namespace
-npx wrangler kv:namespace create SNAPBEAM_KV
-
-# Create R2 bucket (optional, for image storage)
-npx wrangler r2 bucket create snapbeam-photos
-
-# Update wrangler.toml with your IDs
-
-# Deploy
-npx wrangler deploy
-```
-
-### 2. Build the Flutter App
+### Installation
 
 ```bash
-# Navigate to flutter app
+# Clone or download the project
 cd flutter-app
 
 # Install dependencies
@@ -138,165 +48,287 @@ flutter gen-l10n
 
 # Run on device
 flutter run
-
-# Build for release
-flutter build apk --release     # Android
-flutter build ios --release     # iOS
 ```
 
-### 3. Configure the API URL
+### Build for Release
 
-Edit `lib/services/backend_service.dart` and update:
+```bash
+# Android (AAB for Play Store)
+flutter build appbundle --release
 
-```dart
-static const String baseUrl = 'https://your-worker.your-subdomain.workers.dev';
+# Android (APK for direct install)
+flutter build apk --release
+
+# iOS (requires macOS)
+flutter build ios --release
 ```
 
 ---
 
-## 🔌 API Endpoints
+## 📁 Project Structure
 
-### Create Connection
-
-```http
-POST /create
-Response: { "connection_id": "X7K9LM2Q" }
+```
+flutter-app/
+├── android/                      # Android native configuration
+│   ├── app/
+│   │   ├── src/main/
+│   │   │   ├── AndroidManifest.xml    # Permissions & app config
+│   │   │   ├── kotlin/app/snapbeam/photo/
+│   │   │   │   ├── MainActivity.kt
+│   │   │   │   ├── SnapBeamWidgetProvider.kt
+│   │   │   │   └── BootReceiver.kt
+│   │   │   └── res/
+│   │   │       ├── values/
+│   │   │       ├── layout/
+│   │   │       └── xml/
+│   │   ├── build.gradle           # App-level build config
+│   │   └── proguard-rules.pro     # ProGuard rules
+│   ├── build.gradle               # Project-level build config
+│   ├── gradle.properties
+│   └── settings.gradle
+│
+├── ios/                           # iOS native configuration
+│   ├── Runner/
+│   │   ├── Info.plist             # iOS permissions & config
+│   │   └── PrivacyInfo.xcprivacy  # Privacy manifest (iOS 17+)
+│   ├── Runner.xcworkspace/
+│   └── Podfile
+│
+├── lib/                           # Flutter code
+│   ├── main.dart                  # App entry point
+│   ├── screens/
+│   │   ├── splash_screen.dart
+│   │   ├── widget_setup_screen.dart
+│   │   ├── welcome_screen.dart
+│   │   ├── camera_screen.dart
+│   │   ├── settings_screen.dart
+│   │   └── premium_screen.dart
+│   ├── services/
+│   │   ├── backend_service.dart
+│   │   ├── widget_service.dart
+│   │   └── usage_service.dart
+│   ├── providers/
+│   │   ├── connection_provider.dart
+│   │   └── theme_provider.dart
+│   ├── widgets/
+│   │   ├── connection_code_display.dart
+│   │   ├── join_connection_dialog.dart
+│   │   └── photo_widget.dart
+│   ├── l10n/                      # Localization
+│   │   ├── app_en.arb
+│   │   ├── app_ar.arb
+│   │   └── app_es.arb
+│   └── utils/
+│       ├── app_theme.dart
+│       └── image_compress.dart
+│
+├── assets/
+│   ├── images/
+│   └── fonts/
+│
+├── pubspec.yaml                   # Dependencies & config
+├── analysis_options.yaml          # Linting rules
+└── l10n.yaml                      # Localization config
 ```
 
-### Update Photo
+---
 
-```http
-POST /update
-Body: {
-  "connection_id": "X7K9LM2Q",
-  "photo_base64": "...",
-  "caption": "Good morning!"
-}
-```
+## 📲 App Store Compliance
 
-### Get Latest Photo
+### Android Permissions
+| Permission | Purpose |
+|------------|---------|
+| `INTERNET` | API communication |
+| `CAMERA` | Take photos |
+| `READ_EXTERNAL_STORAGE` | Select photos from gallery |
+| `WRITE_EXTERNAL_STORAGE` | Save received photos |
+| `READ_MEDIA_IMAGES` | Access photos on Android 13+ |
+| `VIBRATE` | Haptic feedback |
+| `RECEIVE_BOOT_COMPLETED` | Widget updates after restart |
 
-```http
-GET /latest?connection_id=X7K9LM2Q
-Response: {
-  "last_photo_base64": "...",
-  "last_caption": "Good morning!",
-  "updated_at": "2024-01-15T10:30:00Z"
-}
+### iOS Permissions
+| Permission | Key | Description |
+|------------|-----|-------------|
+| Camera | `NSCameraUsageDescription` | Take photos |
+| Photo Library | `NSPhotoLibraryUsageDescription` | Select photos |
+| Photo Library Add | `NSPhotoLibraryAddUsageDescription` | Save photos |
+
+### Privacy Manifest (iOS 17+)
+- Includes `PrivacyInfo.xcprivacy`
+- All API usage documented
+- No tracking enabled
+- Data collection disclosed
+
+---
+
+## 🎨 Configuration
+
+### App Icon
+Place your app icon at:
+- `assets/images/app_icon.png` (1024x1024)
+- `assets/images/app_icon_foreground.png` (adaptive icon)
+
+Run: `flutter pub run flutter_launcher_icons`
+
+### Splash Screen
+Configure in `pubspec.yaml` under `flutter_native_splash`
+
+Run: `flutter pub run flutter_native_splash:create`
+
+### Backend API
+Update the API URL in `lib/services/backend_service.dart`:
+```dart
+static const String baseUrl = 'https://your-worker.workers.dev';
 ```
 
 ---
 
 ## 🌍 Localization
 
-The app supports multiple languages:
-
-| Language | Code | File |
-|----------|------|------|
-| English | `en` | `app_en.arb` |
-| Arabic | `ar` | `app_ar.arb` |
-| Spanish | `es` | `app_es.arb` |
+Supported languages:
+- 🇺🇸 English (`en`)
+- 🇸🇦 Arabic (`ar`)
+- 🇪🇸 Spanish (`es`)
 
 To add a new language:
-
 1. Create `lib/l10n/app_XX.arb`
-2. Copy translations from `app_en.arb`
-3. Translate all values
+2. Copy and translate from `app_en.arb`
+3. Add locale to `main.dart`
 4. Run `flutter gen-l10n`
 
 ---
 
-## 📱 Widget Setup
+## 🔒 Security Features
 
-### Android
-
-1. Long press on home screen
-2. Tap "Widgets"
-3. Find "SnapBeam"
-4. Drag to home screen
-
-### iOS
-
-1. Long press on home screen
-2. Tap the "+" button
-3. Find "SnapBeam"
-4. Add widget
+- **No personal data collection**
+- **No analytics/tracking**
+- **No user accounts**
+- **End-to-end HTTPS encryption**
+- **Automatic data cleanup**
+- **ProGuard/R8 obfuscation** (Android)
+- **App Transport Security** (iOS)
 
 ---
 
-## 🔒 Security
+## 📦 Deployment
 
-- Connection codes are 8-character random strings
-- No personal data is stored
-- Photos are stored temporarily in KV (with base64) or R2
-- No authentication required
+### Google Play Store
+See: [STORE_DEPLOYMENT.md](docs/STORE_DEPLOYMENT.md)
+
+1. Create Google Play Developer account ($25)
+2. Build signed AAB
+3. Upload to Play Console
+4. Complete store listing
+5. Submit for review
+
+### Apple App Store
+See: [STORE_DEPLOYMENT.md](docs/STORE_DEPLOYMENT.md)
+
+1. Enroll in Apple Developer Program ($99/year)
+2. Create App ID and certificates
+3. Archive in Xcode
+4. Upload to App Store Connect
+5. Complete store listing
+6. Submit for review
 
 ---
 
-## 💰 Cost (Cloudflare Free Tier)
+## 📄 Documentation
 
-| Service | Free Limit |
-|---------|------------|
-| Workers | 100,000 requests/day |
-| KV Reads | 100,000/day |
-| KV Writes | 1,000/day |
-| R2 Storage | 10GB |
-| R2 Operations | 1M Class A, 10M Class B/month |
-
-For most personal use cases, this is completely free!
+| File | Description |
+|------|-------------|
+| [README.md](README.md) | This file |
+| [STORE_DEPLOYMENT.md](docs/STORE_DEPLOYMENT.md) | Step-by-step store deployment |
+| [APP_STORE_METADATA.md](docs/APP_STORE_METADATA.md) | Store listing content |
+| [PRIVACY_POLICY.md](docs/PRIVACY_POLICY.md) | Privacy policy |
+| [TERMS_OF_SERVICE.md](docs/TERMS_OF_SERVICE.md) | Terms of service |
+| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Technical deployment |
 
 ---
 
-## 🎨 Design System
+## 🔧 Backend
 
-### Colors
+See: `cloudflare-workers/` directory
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Primary | `#6366F1` | Buttons, links |
-| Secondary | `#EC4899` | Accents, highlights |
-| Tertiary | `#14B8A6` | Secondary actions |
+The backend runs on Cloudflare Workers (free tier):
+- KV storage for connections
+- R2 for image storage
+- REST API endpoints
 
-### Typography
-
-- Primary font: Poppins
-- Weights: Regular (400), Medium (500), SemiBold (600), Bold (700)
+### API Endpoints
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/create` | POST | Create connection |
+| `/update` | POST | Update photo |
+| `/latest` | GET | Get latest photo |
+| `/upload` | POST | Upload to R2 |
 
 ---
 
 ## 🛠 Development
 
 ### Run Tests
-
 ```bash
 flutter test
 ```
 
 ### Analyze Code
-
 ```bash
 flutter analyze
 ```
 
-### Build for Web (Demo)
-
+### Format Code
 ```bash
-flutter build web
+dart format .
+```
+
+### Check Dependencies
+```bash
+flutter pub outdated
 ```
 
 ---
 
-## 📄 License
+## 💰 Monetization
 
-MIT License - Feel free to use, modify, and distribute.
+| Plan | Daily Sends | Price |
+|------|-------------|-------|
+| Free | 2/day | $0 |
+| Premium (Coming Soon) | Unlimited | $2.99/month or $19.99/year |
+
+### Premium Features (Coming Soon)
+- ✨ Unlimited photo sends
+- 📷 HD quality photos
+- 📁 30-day photo history
+- 🎨 Custom widget themes
+- 👥 Multiple connections
+- ⚡ Priority support
+
+---
+
+## 💰 Cost (Free Tier)
+
+| Service | Free Limit |
+|---------|------------|
+| Cloudflare Workers | 100,000 requests/day |
+| Cloudflare KV | 100,000 reads/day |
+| Cloudflare R2 | 10GB storage |
+| Google Play | $25 one-time |
+| Apple App Store | $99/year |
+
+---
+
+## 📝 License
+
+MIT License - See [LICENSE](LICENSE) file.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Flutter team for the amazing framework
-- Cloudflare for the free edge computing platform
-- All contributors and testers
+- Flutter team
+- Cloudflare
+- All contributors
 
 ---
 
