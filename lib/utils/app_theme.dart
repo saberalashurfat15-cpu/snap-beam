@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
-
-import 'app_localizations.dart';
-
 /// Application theme configuration
 class AppTheme {
   // Brand colors
