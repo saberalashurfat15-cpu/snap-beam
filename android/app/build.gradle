@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "app.snapbeam.photo"
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -43,7 +43,7 @@ android {
     defaultConfig {
         applicationId "app.snapbeam.photo"
         minSdk 21
-        targetSdk 34
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         
@@ -52,7 +52,8 @@ android {
         
         // Widget provider authority
         manifestPlaceholders = [
-            applicationLabel: "SnapBeam"
+            applicationLabel: "SnapBeam",
+            applicationName: "io.flutter.app.FlutterApplication"
         ]
     }
 
