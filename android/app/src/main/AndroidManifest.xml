@@ -18,7 +18,7 @@
     <application
         android:label="SnapBeam"
         android:name="${applicationName}"
-        android:icon="@drawable/launch_background"
+        android:icon="@drawable/ic_launcher"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
