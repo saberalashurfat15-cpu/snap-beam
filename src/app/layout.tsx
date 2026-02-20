@@ -14,24 +14,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "SnapBeam - Send Moments Instantly",
+  description: "Send moments. Instantly live on your loved one's home screen. No accounts, no login - just private connection codes.",
+  keywords: ["SnapBeam", "Photo Sharing", "Home Screen Widget", "Family Photos", "Instant Sharing", "No Account"],
+  authors: [{ name: "SnapBeam Team" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "SnapBeam - Send Moments Instantly",
+    description: "Send moments. Instantly live on your loved one's home screen.",
+    url: "https://snapbeam.app",
+    siteName: "SnapBeam",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "SnapBeam - Send Moments Instantly",
+    description: "Send moments. Instantly live on your loved one's home screen.",
   },
 };
 

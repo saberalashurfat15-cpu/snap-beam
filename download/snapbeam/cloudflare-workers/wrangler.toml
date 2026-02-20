@@ -1,0 +1,45 @@
+# SnapBeam Cloudflare Worker Configuration
+# 
+# Setup Instructions:
+# 1. Install Wrangler CLI: npm install -g wrangler
+# 2. Login to Cloudflare: wrangler login
+# 3. Create KV namespace: wrangler kv:namespace create SNAPBEAM_KV
+# 4. Create R2 bucket: wrangler r2 bucket create snapbeam-photos
+# 5. Update the kv_namespaces and r2_buckets IDs below
+# 6. Deploy: wrangler deploy
+
+name = "snapbeam-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Account ID (find in Cloudflare dashboard)
+# account_id = "your-account-id"
+
+# KV Namespace for connection data
+# Run: wrangler kv:namespace create SNAPBEAM_KV
+# Then copy the ID below
+[[kv_namespaces]]
+binding = "SNAPBEAM_KV"
+id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
+# R2 Bucket for photo storage
+# Run: wrangler r2 bucket create snapbeam-photos
+# Then uncomment and configure below
+# [[r2_buckets]]
+# binding = "SNAPBEAM_R2"
+# bucket_name = "snapbeam-photos"
+
+# Environment variables (optional)
+# [vars]
+# MAX_PHOTO_SIZE = "10485760"  # 10MB
+
+# Routes (custom domain)
+# [[routes]]
+# pattern = "api.snapbeam.app/*"
+# zone_name = "snapbeam.app"
+
+# Development settings
+[dev]
+port = 8787
+local_protocol = "http"

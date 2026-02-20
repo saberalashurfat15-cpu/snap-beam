@@ -1,0 +1,13 @@
+{
+  "name": "snapbeam-api",
+  "version": "1.0.0",
+  "description": "SnapBeam Cloudflare Workers API",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
