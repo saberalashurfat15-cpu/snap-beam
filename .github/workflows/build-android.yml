@@ -33,27 +33,27 @@ jobs:
       run: |
         cp -r download/snapbeam/flutter-app/* snap-beam/
         cd snap-beam
-        # Fix any intl version conflicts
-        sed -i 's/intl: .*$/intl: ^0.19.0/' pubspec.yaml 2>/dev/null || true
+        echo "✅ Flutter app copied to snap-beam/"
     
     - name: Get Flutter dependencies
       run: |
         cd snap-beam
         flutter pub get
+        echo "✅ Dependencies resolved"
     
     - name: Build APK (Release)
       run: |
         cd snap-beam
-        flutter build apk --release
-        echo "✅ APK built successfully"
+        flutter build apk --release 2>&1 | tee apk-build.log
         ls -lah build/app/outputs/flutter-apk/ || ls -lah build/app/outputs/apk/release/
+        echo "✅ APK built successfully"
     
     - name: Build AAB (Release)
       run: |
         cd snap-beam
-        flutter build appbundle --release
-        echo "✅ AAB built successfully"
+        flutter build appbundle --release 2>&1 | tee aab-build.log
         ls -lah build/app/outputs/bundle/release/
+        echo "✅ AAB built successfully"
     
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
