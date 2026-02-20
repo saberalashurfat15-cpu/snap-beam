@@ -13,114 +13,95 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
     
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
     
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.24.0'
         channel: 'stable'
-        cache: true
     
-    - name: Prepare build directory
+    - name: Prepare directories
+      shell: bash
       run: |
         mkdir -p snap-beam
-        echo "✅ Build directory created"
+        echo "Creating snap-beam directory..."
+        ls -la download/snapbeam/flutter-app/ || echo "Source not found!"
     
     - name: Copy Flutter app
+      shell: bash
       run: |
         cp -r download/snapbeam/flutter-app/* snap-beam/
-        ls -la snap-beam/
-        echo "✅ Flutter app copied"
-    
-    - name: Validate Flutter setup
-      run: |
         cd snap-beam
+        ls -la
+        pwd
+    
+    - name: Check Flutter setup
+      shell: bash
+      run: |
         flutter --version
-        flutter doctor -v
+        flutter doctor
     
     - name: Get dependencies
+      shell: bash
       run: |
         cd snap-beam
-        flutter clean
         flutter pub get
-        echo "✅ Dependencies resolved"
+        ls -la pubspec.lock || echo "pubspec.lock not created"
     
-    - name: Generate localization files
+    - name: Build APK Release
+      shell: bash
       run: |
         cd snap-beam
-        flutter gen-l10n --output-localization-file=app_localizations.dart
-        echo "✅ Localization files generated"
-      continue-on-error: true
-    
-    - name: Build APK (Debug first)
-      run: |
-        cd snap-beam
-        flutter build apk --debug 2>&1
-        echo "✅ Debug APK built"
-        find . -path "*build/app/outputs*" -name "*.apk" -type f
-      continue-on-error: true
-    
-    - name: Build APK (Release)
-      run: |
-        cd snap-beam
-        echo "Building Release APK..."
         flutter build apk --release 2>&1
-        echo "✅ Release APK built"
-        echo "APK output location:"
-        find . -path "*build/app/outputs*" -name "*.apk" -type f
+        APK_EXIT=$?
+        echo "APK build exit code: $APK_EXIT"
+        exit $APK_EXIT
     
-    - name: Build AAB (Release)
+    - name: Build AAB Release  
+      shell: bash
       run: |
         cd snap-beam
-        echo "Building Release AAB..."
         flutter build appbundle --release 2>&1
-        echo "✅ Release AAB built"
-        echo "AAB output location:"
-        find . -path "*build/app/outputs*" -name "*.aab" -type f
+        AAB_EXIT=$?
+        echo "AAB build exit code: $AAB_EXIT"
+        exit $AAB_EXIT
     
-    - name: Check APK outputs
+    - name: List built artifacts
+      shell: bash
       if: always()
       run: |
-        echo "APK outputs:"
-        find snap-beam -name "*.apk" -type f 2>/dev/null || echo "No APK found"
+        echo "=== Looking for APK files ==="
+        find snap-beam/build -name "*.apk" -type f 2>/dev/null | head -20 || echo "No APK found"
         echo ""
-        echo "AAB outputs:"
-        find snap-beam -name "*.aab" -type f 2>/dev/null || echo "No AAB found"
+        echo "=== Looking for AAB files ==="
+        find snap-beam/build -name "*.aab" -type f 2>/dev/null | head -20 || echo "No AAB found"
         echo ""
-        echo "Build directory structure:"
-        find snap-beam/build -type f -name "*.apk" -o -name "*.aab" 2>/dev/null || echo "No artifacts in build"
+        echo "=== Full build output structure ==="
+        find snap-beam/build/app/outputs -type f 2>/dev/null | head -30 || echo "No outputs directory"
     
-    - name: Upload APK Artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: snapbeam-apk-release
-        path: snap-beam/build/app/outputs/apk/release/
-        retention-days: 30
+        name: apk-build
+        path: snap-beam/build/app/outputs/apk/
+        if-no-files-found: warn
     
-    - name: Upload AAB Artifact
+    - name: Upload AAB
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: snapbeam-aab-release
-        path: snap-beam/build/app/outputs/bundle/release/
-        retention-days: 30
+        name: aab-build
+        path: snap-beam/build/app/outputs/bundle/
+        if-no-files-found: warn
     
-    - name: Build Summary
+    - name: Build completion status
+      shell: bash
       if: always()
-      run: |
-        echo "======================================"
-        echo "📊 Build Summary"
-        echo "======================================"
-        echo "Check artifacts in GitHub Actions!"
-        echo "APK: snapbeam-apk-release"
-        echo "AAB: snapbeam-aab-release"
+      run: echo "Build workflow completed"
