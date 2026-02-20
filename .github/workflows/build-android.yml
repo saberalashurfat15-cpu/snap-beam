@@ -26,70 +26,56 @@ jobs:
         flutter-version: '3.24.0'
         channel: 'stable'
     
-    - name: Prepare directories
-      shell: bash
+    - name: Copy Flutter app
       run: |
         mkdir -p snap-beam
-        echo "Creating snap-beam directory..."
-        ls -la download/snapbeam/flutter-app/ || echo "Source not found!"
-    
-    - name: Copy Flutter app
-      shell: bash
-      run: |
         cp -r download/snapbeam/flutter-app/* snap-beam/
         cd snap-beam
+        echo "Flutter app copied"
         ls -la
-        pwd
     
-    - name: Check Flutter setup
-      shell: bash
-      run: |
-        flutter --version
-        flutter doctor
+    - name: Flutter doctor
+      run: flutter doctor -v
     
     - name: Get dependencies
-      shell: bash
       run: |
         cd snap-beam
         flutter pub get
-        ls -la pubspec.lock || echo "pubspec.lock not created"
     
     - name: Build APK Release
-      shell: bash
       run: |
         cd snap-beam
-        flutter build apk --release 2>&1
-        APK_EXIT=$?
-        echo "APK build exit code: $APK_EXIT"
-        exit $APK_EXIT
+        set -x
+        flutter build apk --release -v
+        BUILD_RESULT=$?
+        echo "Build exited with code: $BUILD_RESULT"
+        find build -type f \( -name "*.apk" -o -name "*.aab" \) 2>/dev/null || true
+        exit $BUILD_RESULT
     
-    - name: Build AAB Release  
-      shell: bash
+    - name: Build AAB Release
       run: |
         cd snap-beam
-        flutter build appbundle --release 2>&1
-        AAB_EXIT=$?
-        echo "AAB build exit code: $AAB_EXIT"
-        exit $AAB_EXIT
+        set -x
+        flutter build appbundle --release -v
+        BUILD_RESULT=$?
+        echo "Build exited with code: $BUILD_RESULT"
+        find build -type f \( -name "*.apk" -o -name "*.aab" \) 2>/dev/null || true
+        exit $BUILD_RESULT
     
-    - name: List built artifacts
-      shell: bash
+    - name: Find all artifacts
       if: always()
       run: |
-        echo "=== Looking for APK files ==="
-        find snap-beam/build -name "*.apk" -type f 2>/dev/null | head -20 || echo "No APK found"
+        echo "=== Searching for APK and AAB files ==="
+        find snap-beam/build -type f \( -name "*.apk" -o -name "*.aab" \) 2>/dev/null | sort || echo "No APK/AAB found"
         echo ""
-        echo "=== Looking for AAB files ==="
-        find snap-beam/build -name "*.aab" -type f 2>/dev/null | head -20 || echo "No AAB found"
-        echo ""
-        echo "=== Full build output structure ==="
-        find snap-beam/build/app/outputs -type f 2>/dev/null | head -30 || echo "No outputs directory"
+        echo "=== Build outputs directory ==="
+        ls -R snap-beam/build/app/outputs/ 2>/dev/null || echo "No outputs directory"
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: apk-build
+        name: apk-files
         path: snap-beam/build/app/outputs/apk/
         if-no-files-found: warn
     
@@ -97,11 +83,6 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: aab-build
+        name: aab-files
         path: snap-beam/build/app/outputs/bundle/
         if-no-files-found: warn
-    
-    - name: Build completion status
-      shell: bash
-      if: always()
-      run: echo "Build workflow completed"
