@@ -1,0 +1,183 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "SnapBeam",
+  "@appTitle": {
+    "description": "The application title"
+  },
+  
+  "tagline": "Send moments. Instantly live on your loved one's home screen.",
+  "@tagline": {
+    "description": "App tagline"
+  },
+  
+  "welcomeTitle": "Welcome to SnapBeam",
+  "@welcomeTitle": {
+    "description": "Welcome screen title"
+  },
+  
+  "createConnection": "Create Connection",
+  "@createConnection": {
+    "description": "Button to create a new connection"
+  },
+  
+  "joinConnection": "Join Connection",
+  "@joinConnection": {
+    "description": "Button to join an existing connection"
+  },
+  
+  "enterCode": "Enter Connection Code",
+  "@enterCode": {
+    "description": "Prompt to enter connection code"
+  },
+  
+  "yourCode": "Your Connection Code",
+  "@yourCode": {
+    "description": "Label for the user's connection code"
+  },
+  
+  "shareCode": "Share Code",
+  "@shareCode": {
+    "description": "Button to share connection code"
+  },
+  
+  "takePhoto": "Take Photo",
+  "@takePhoto": {
+    "description": "Button to take a photo"
+  },
+  
+  "sendPhoto": "Send Photo",
+  "@sendPhoto": {
+    "description": "Button to send photo"
+  },
+  
+  "addCaption": "Add a caption...",
+  "@addCaption": {
+    "description": "Placeholder for caption input"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+  
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme settings"
+  },
+  
+  "lightTheme": "Light",
+  "@lightTheme": {
+    "description": "Light theme option"
+  },
+  
+  "darkTheme": "Dark",
+  "@darkTheme": {
+    "description": "Dark theme option"
+  },
+  
+  "systemTheme": "System",
+  "@systemTheme": {
+    "description": "System theme option"
+  },
+  
+  "language": "Language",
+  "@language": {
+    "description": "Language settings"
+  },
+  
+  "disconnect": "Disconnect",
+  "@disconnect": {
+    "description": "Disconnect button"
+  },
+  
+  "regenerateCode": "Regenerate Code",
+  "@regenerateCode": {
+    "description": "Button to regenerate connection code"
+  },
+  
+  "photoSent": "Photo sent successfully!",
+  "@photoSent": {
+    "description": "Success message after sending photo"
+  },
+  
+  "photoReceived": "New photo received!",
+  "@photoReceived": {
+    "description": "Notification for new photo"
+  },
+  
+  "connectionCreated": "Connection created!",
+  "@connectionCreated": {
+    "description": "Success message for connection creation"
+  },
+  
+  "connectionJoined": "Connected successfully!",
+  "@connectionJoined": {
+    "description": "Success message for joining connection"
+  },
+  
+  "errorOccurred": "An error occurred",
+  "@errorOccurred": {
+    "description": "Generic error message"
+  },
+  
+  "invalidCode": "Invalid connection code",
+  "@invalidCode": {
+    "description": "Error for invalid code"
+  },
+  
+  "noConnection": "No active connection",
+  "@noConnection": {
+    "description": "Error when no connection exists"
+  },
+  
+  "lastUpdated": "Last updated",
+  "@lastUpdated": {
+    "description": "Label for last update time"
+  },
+  
+  "waitingForPhoto": "Waiting for first photo...",
+  "@waitingForPhoto": {
+    "description": "Placeholder when no photo yet"
+  },
+  
+  "gallery": "Gallery",
+  "@gallery": {
+    "description": "Gallery option"
+  },
+  
+  "camera": "Camera",
+  "@camera": {
+    "description": "Camera option"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button"
+  },
+  
+  "widgetSetup": "Widget Setup",
+  "@widgetSetup": {
+    "description": "Widget setup instructions title"
+  },
+  
+  "widgetInstructions": "Add the SnapBeam widget to your home screen to see photos from your loved ones instantly.",
+  "@widgetInstructions": {
+    "description": "Widget setup instructions"
+  },
+  
+  "aboutSnapbeam": "About SnapBeam",
+  "@aboutSnapbeam": {
+    "description": "About section title"
+  },
+  
+  "version": "Version",
+  "@version": {
+    "description": "Version label"
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SnapBeam</string>
+    <string name="widget_description">See the latest shared photo from your loved ones</string>
+    <string name="waiting_for_photo">Waiting for photo…</string>
+    <string name="last_updated">Last updated</string>
+</resources>
